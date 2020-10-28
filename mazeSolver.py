@@ -59,11 +59,34 @@ def solveMaze(mazeGrid, start, goal, algorithm):
                 # update visited
                 maze.updateVisited(neighbor)
 
+        # ========================================================
+        # TODO: add numpy plots as the maze updates
+        # use numpy to print maze.visited,
+        from copy import deepcopy 
+        import numpy as np
+        import matplotlib.pyplot as plt
+
+        mazeVisited = deepcopy(maze.visited)
+        mazeVisited[start.i][start.j] = 0.8
+        mazeVisited[goal.i][goal.j] = 0.85
+        plt.imshow(mazeVisited, cmap='viridis', vmin=0.0, vmax=1.0)
+        plt.ion()
+        plt.show()
+        plt.pause(0.05)
+
     # was there a solution?
     if returnPathFlag:
         print(f'For {algorithm} the solution is: \n')
         maze.updateFinalPath(currentCoord.getPath())
         maze.printVisited()
+
+    # ========================================================
+    #  TODO: add numpy plots as the maze updates
+    mazeVisited = deepcopy(maze.visited)
+    plt.imshow(mazeVisited, cmap='viridis', vmin=0.0, vmax=1.0)
+    plt.draw()
+    plt.show()
+    plt.pause(10)
 
     return maze
 

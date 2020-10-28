@@ -29,13 +29,18 @@ class PriorityCoordinate:
         self.parent = parentCoordinate
         self.stepsHome = parentCoordinate.stepsHome + 1
 
-    def stepsToGoal(self, goalCoordinate):
+    def stepsToGoal(self, goalCoordinate, heuristic='l2'):
         """
         Get the l1 (city-block) distance to the goal.
         """
-        l1Distance = abs(goalCoordinate.i - self.i) + \
-            abs(goalCoordinate.j - self.j)
-        return l1Distance
+        if heuristic == 'l1':
+            distance = abs(goalCoordinate.i - self.i) + \
+                abs(goalCoordinate.j - self.j)
+        else: # l2
+            distance = ((goalCoordinate.i - self.i)**2  +  \
+                (goalCoordinate.j - self.j)**2)**(1/2)
+
+        return distance
 
     def getPath(self):
         """
@@ -97,7 +102,7 @@ class Maze:
         Update the visited map with a given coordinate.
         """
         if self.validCoordinate(coordinate) == True:
-            self.visited[coordinate.i][coordinate.j] = 'V'
+            self.visited[coordinate.i][coordinate.j] = 0.1
 
     def updateFinalPath(self, path):
         """
@@ -105,11 +110,11 @@ class Maze:
         updated the visited map to show the final path and start and end points.
         """
         for i, j in path:
-            self.visited[i][j] = '*'
+            self.visited[i][j] = 0.7
         i, j = path[0]
-        self.visited[i][j] = 'S'
+        self.visited[i][j] = 0.8
         i, j = path[-1]
-        self.visited[i][j] = 'G'
+        self.visited[i][j] = 0.85
 
     def formatMaze(self, maze):
         """Formats maze for printing."""
