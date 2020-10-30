@@ -1,5 +1,5 @@
 from mazeModule import *
-
+import matplotlib.pyplot as plt
 
 def solveMaze(mazeGrid, start, goal, algorithm):
     """
@@ -37,6 +37,9 @@ def solveMaze(mazeGrid, start, goal, algorithm):
     # flags
     returnPathFlag = False
 
+    # open figure
+    plt.figure()
+
     # when there are items in the queue
     while queue.isEmpty == False:
         # get item from queue
@@ -59,20 +62,14 @@ def solveMaze(mazeGrid, start, goal, algorithm):
                 # update visited
                 maze.updateVisited(neighbor)
 
-        # ========================================================
-        # TODO: add numpy plots as the maze updates
-        # use numpy to print maze.visited,
-        from copy import deepcopy 
-        import numpy as np
-        import matplotlib.pyplot as plt
-
-        mazeVisited = deepcopy(maze.visited)
-        mazeVisited[start.i][start.j] = 0.8
-        mazeVisited[goal.i][goal.j] = 0.85
+        # plot results
+        mazeVisited = maze.getVisitedCopy(start, goal)
+        # plot with numpy and update each loop
         plt.imshow(mazeVisited, cmap='viridis', vmin=0.0, vmax=1.0)
+        plt.title(algorithm)
         plt.ion()
         plt.show()
-        plt.pause(0.05)
+        plt.pause(0.01)
 
     # was there a solution?
     if returnPathFlag:
@@ -80,16 +77,41 @@ def solveMaze(mazeGrid, start, goal, algorithm):
         maze.updateFinalPath(currentCoord.getPath())
         maze.printVisited()
 
-    # ========================================================
-    #  TODO: add numpy plots as the maze updates
-    mazeVisited = deepcopy(maze.visited)
-    plt.imshow(mazeVisited, cmap='viridis', vmin=0.0, vmax=1.0)
+    # get final copy
+    finalMaze = maze.getVisitedCopy(start, goal)
+    return finalMaze
+
+
+def plotResults(plots, titles):
+    """
+    Plot the results for the three searching algorithms.
+    """
+    plt.figure()
+    # plot result
+    for idx, name in enumerate(titles):
+        plt.subplot(1, len(titles), idx + 1)
+        plt.imshow(plots[idx], cmap='viridis', vmin=0.0, vmax=1.0)
+        plt.title(titles[idx])
+    # show    
     plt.draw()
     plt.show()
     plt.pause(10)
 
-    return maze
+    return None
 
+def compareAlgorithms(mazeGrid, start, goal):
+    """
+    For the current grid, compare searching with each algorithm.
+    """
+    # solve the maze
+    # choose algo,  'astar', 'DFS', 'BFS'
+    mazeVisitedAstar = solveMaze(mazeGrid, start, goal, 'astar')
+    mazeVisitedDFS = solveMaze(mazeGrid, start, goal, 'DFS')
+    mazeVisitedBFS = solveMaze(mazeGrid, start, goal, 'BFS')
+    # plot the results
+    plotResults([mazeVisitedAstar, mazeVisitedDFS, mazeVisitedBFS], ['A*', 'DFS', 'BFS'])
+    
+    return None
 
 # -------------------------------------------------
 # maze 1
@@ -105,12 +127,7 @@ mazeGrid = [[0, 0, 0, 0, 0, 0],
 
 start = PriorityCoordinate(0, 5)
 goal = PriorityCoordinate(5, 2)
-
-# solve the maze
-# choose algo,  'astar', 'DFS', 'BFS'
-solveMaze(mazeGrid, start, goal, 'astar')
-solveMaze(mazeGrid, start, goal, 'DFS')
-solveMaze(mazeGrid, start, goal, 'BFS')
+compareAlgorithms(mazeGrid, start, goal)
 
 # -------------------------------------------------
 # maze 2
@@ -130,9 +147,4 @@ mazeGrid = [[0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
 
 start = PriorityCoordinate(0, 0)
 goal = PriorityCoordinate(len(mazeGrid)-1, len(mazeGrid[0])-1)
-
-# solve the maze
-# choose algo,  'astar', 'DFS', 'BFS'
-solveMaze(mazeGrid, start, goal, 'astar')
-solveMaze(mazeGrid, start, goal, 'DFS')
-solveMaze(mazeGrid, start, goal, 'BFS')
+compareAlgorithms(mazeGrid, start, goal)

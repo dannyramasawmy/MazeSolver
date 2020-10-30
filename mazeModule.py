@@ -103,6 +103,15 @@ class Maze:
         """
         if self.validCoordinate(coordinate) == True:
             self.visited[coordinate.i][coordinate.j] = 0.1
+    
+    def getVisitedCopy(self, start : PriorityCoordinate, goal: PriorityCoordinate):
+        """
+        Return a copy of selfvisited
+        """
+        mazeVisited = deepcopy(self.visited) 
+        mazeVisited[start.i][start.j] = 0.8
+        mazeVisited[goal.i][goal.j] = 0.85
+        return mazeVisited
 
     def updateFinalPath(self, path):
         """
